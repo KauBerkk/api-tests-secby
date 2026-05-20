@@ -51,3 +51,13 @@ class ApiClient:
             f"{BASE_URL}/api/profiles/{account_id}",
             headers={"Authorization": f"Bearer {token}"}
         )
+    
+    @staticmethod
+    def verify_token(token):
+
+        return requests.post(
+            f"{BASE_URL}/api/auth/verify",
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )

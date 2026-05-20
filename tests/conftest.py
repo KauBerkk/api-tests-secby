@@ -1,31 +1,46 @@
 import pytest
 import random
+
 from utils.api_client import ApiClient
 
 
 @pytest.fixture
 def test_user():
 
-    num = random.randint(1000, 9999)
+    number = random.randint(1000, 9999)
 
-    username = f"user{num}"
-    email = f"user{num}@mail.com"
+    username = f"user{number}"
+    email = f"user{number}@mail.com"
     password = "Test12345!"
 
-    ApiClient.register(username, email, password)
-
-    return {
-        "username": username,
-        "password": password
-    }
-
-
-@pytest.fixture
-def user_token(test_user):
-
-    response = ApiClient.login(
-        test_user["username"],
-        test_user["password"]
+    register_response = ApiClient.register(
+        username,
+        email,
+        password
     )
 
-    return response.json()["access_token"]
+    login_response = ApiClient.login(
+        username,
+        password
+    )
+
+    response_data = login_response.json()
+
+    token = response_data["access_token"]
+
+    account_id = response_data["user"]["id"]
+
+    user_data = {
+        "username": username,
+        "email": email,
+        "password": password,
+        "token": token,
+        "account_id": account_id
+    }
+
+    yield user_data
+
+    ApiClient.delete_profile(
+        token,
+        account_id
+    )

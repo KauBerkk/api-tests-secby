@@ -1,12 +1,6 @@
 import allure
 from utils.api_client import ApiClient
-
-
-@allure.feature("Roles")
-def test_user_access_profiles(user_token):
-
-    response = ApiClient.get_profiles(user_token)
-    assert response.status_code in [200, 403]
+from utils.assertions import assert_status_code
 
 
 @allure.feature("Roles")

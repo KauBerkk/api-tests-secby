@@ -2,7 +2,7 @@ import allure
 
 from utils.api_client import ApiClient
 from utils.config import ADMIN_LOGIN, ADMIN_PASSWORD
-
+from utils.assertions import assert_status_code
 
 def get_admin_token():
 
@@ -25,7 +25,7 @@ def test_admin_login_success():
         ADMIN_PASSWORD
     )
 
-    assert response.status_code == 200
+    assert_status_code(response, 200)
 
     response_data = response.json()
 
@@ -54,4 +54,8 @@ def test_admin_can_get_profiles():
 
     response = ApiClient.get_profiles(token)
 
-    assert response.status_code == 200
+    assert_status_code(response, 200)
+
+    response_data = response.json()
+
+    assert len(response_data) > 0

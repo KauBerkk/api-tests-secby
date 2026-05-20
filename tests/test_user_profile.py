@@ -1,33 +1,38 @@
 import allure
 
 from utils.api_client import ApiClient
-from utils.config import USER_LOGIN, USER_PASSWORD
-
-
-def get_token():
-
-    response = ApiClient.login(
-        USER_LOGIN,
-        USER_PASSWORD
-    )
-
-    response_data = response.json()
-
-    if "token" in response_data:
-        return response_data["token"]
-
-    return response_data["access_token"]
+from utils.assertions import assert_status_code
 
 
 @allure.feature("Profile")
-def test_get_my_profile():
+def test_get_my_profile(test_user):
 
-    token = get_token()
+    response = ApiClient.get_my_profile(
+        test_user["token"]
+    )
 
-    response = ApiClient.get_my_profile(token)
-
-    assert response.status_code == 200
-
+    assert_status_code(response, 200)
     response_data = response.json()
 
-    assert response_data is not None
+    assert test_user["username"] in str(response_data)
+    assert test_user["email"] in str(response_data)
+
+
+@allure.feature("Profile")
+def test_get_profile_invalid_token():
+
+    response = ApiClient.get_my_profile(
+        "invalid_token"
+    )
+
+    assert_status_code(response, 401)
+
+
+@allure.feature("Profile")
+def test_get_profile_without_token():
+
+    response = ApiClient.get_my_profile(
+        ""
+    )
+
+    assert_status_code(response, 403)
