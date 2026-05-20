@@ -43,3 +43,11 @@ class ApiClient:
             f"{BASE_URL}/api/profiles/",
             headers={"Authorization": f"Bearer {token}"}
         )
+    
+    @staticmethod
+    def delete_profile(token, account_id):
+
+        return requests.delete(
+            f"{BASE_URL}/api/profiles/{account_id}",
+            headers={"Authorization": f"Bearer {token}"}
+        )
